@@ -21,7 +21,14 @@ if (!MONGODB_URI) {
 }
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'https://labishbardiya.com'],
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://labishbardiya.com',
+    'https://www.labishbardiya.com',
+    'https://my-portfolio-hvqh.onrender.com',
+    /\.vercel\.app$/,
+  ],
 }));
 app.use(express.json());
 

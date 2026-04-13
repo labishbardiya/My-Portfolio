@@ -1,0 +1,187 @@
+/* App-specific styles */
+
+/* Smooth scroll for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom cursor styles (optional enhancement) */
+.custom-cursor {
+  pointer-events: none;
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(123, 47, 247, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, border-color 0.2s;
+  z-index: 9999;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor.hover {
+  width: 40px;
+  height: 40px;
+  border-color: rgba(0, 194, 255, 0.8);
+}
+
+/* Enhanced card hover effects */
+.card-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.card-3d:hover {
+  transform: rotateY(5deg) rotateX(5deg);
+}
+
+/* Glow effects */
+.glow-text {
+  text-shadow: 0 0 20px rgba(123, 47, 247, 0.5),
+               0 0 40px rgba(123, 47, 247, 0.3),
+               0 0 60px rgba(123, 47, 247, 0.2);
+}
+
+/* Animated border gradient */
+.border-gradient {
+  position: relative;
+  background: linear-gradient(var(--bg-color), var(--bg-color)) padding-box,
+              linear-gradient(135deg, #7B2FF7, #00C2FF, #F72F8F) border-box;
+  border: 2px solid transparent;
+}
+
+/* Shimmer effect for loading states */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Magnetic button effect enhancement */
+.magnetic-area {
+  position: relative;
+}
+
+.magnetic-area::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  z-index: -1;
+}
+
+/* Section transitions */
+section {
+  position: relative;
+}
+
+/* Parallax layer styles */
+.parallax-slow {
+  will-change: transform;
+}
+
+.parallax-fast {
+  will-change: transform;
+}
+
+/* Responsive typography adjustments */
+@media (max-width: 640px) {
+  .heading-xl {
+    font-size: 2.5rem;
+  }
+  
+  .heading-lg {
+    font-size: 2rem;
+  }
+  
+  .heading-md {
+    font-size: 1.5rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .noise-overlay,
+  nav,
+  .scroll-indicator {
+    display: none !important;
+  }
+  
+  section {
+    break-inside: avoid;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .glass {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Light theme specific overrides */
+.light body {
+  background-color: #FFFFFF;
+  color: #0A0A0F;
+}
+
+.light .glass {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.light .skill-pill {
+  background: rgba(123, 47, 247, 0.1);
+  border: 1px solid rgba(123, 47, 247, 0.2);
+  color: #0A0A0F;
+}
+
+.light .card-lift:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.light .btn-outline {
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #0A0A0F;
+}
+
+.light .btn-outline:hover {
+  border-color: #7B2FF7;
+  background: rgba(123, 47, 247, 0.1);
+}
+
+/* Dark theme (default) */
+.dark body {
+  background-color: #0A0A0F;
+  color: #FFFFFF;
+}

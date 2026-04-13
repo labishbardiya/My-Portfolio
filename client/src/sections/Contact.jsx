@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Send, Github, Linkedin, Mail, MapPin, Twitter, Youtube, Instagram, BookOpen, Globe } from 'lucide-react';
+import { Send, Github, Linkedin, Mail, MapPin, Twitter, Youtube, Instagram, BookOpen, Globe, Code2, ExternalLink } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -161,6 +161,21 @@ const Contact = () => {
     },
   ];
 
+  const competitiveProfiles = [
+    {
+      label: 'CodeChef',
+      href: 'https://www.codechef.com/users/labishbardiya',
+    },
+    {
+      label: 'LeetCode',
+      href: 'https://leetcode.com/u/labishbardiya/',
+    },
+    {
+      label: 'GeeksforGeeks',
+      href: 'https://www.geeksforgeeks.org/profile/labishbardiya19',
+    },
+  ];
+
   return (
     <section
       id="contact"
@@ -239,7 +254,7 @@ const Contact = () => {
                         borderColor: 'var(--border-color)',
                         color: 'var(--text-primary)'
                       }}
-                      placeholder="John Doe"
+                      placeholder="name..."
                     />
                   </div>
 
@@ -265,7 +280,7 @@ const Contact = () => {
                         borderColor: 'var(--border-color)',
                         color: 'var(--text-primary)'
                       }}
-                      placeholder="john@example.com"
+                      placeholder="email..."
                     />
                   </div>
 
@@ -291,7 +306,7 @@ const Contact = () => {
                         borderColor: 'var(--border-color)',
                         color: 'var(--text-primary)'
                       }}
-                      placeholder="Tell me about your project..."
+                      placeholder="tell me about your project..."
                     />
                   </div>
 
@@ -409,6 +424,49 @@ const Contact = () => {
                     <span className="text-xs font-medium">{social.label}</span>
                   </a>
                 ))}
+              </div>
+
+              {/* Competitive Programming */}
+              <div className="glass rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ background: 'var(--bg-secondary)' }}
+                  >
+                    <Code2 className="w-5 h-5 text-cyan" />
+                  </div>
+                  <div>
+                    <h3
+                      className="font-serif-display font-semibold text-lg"
+                      style={{ color: 'var(--text-primary)' }}
+                    >
+                      Competitive Programming
+                    </h3>
+                    <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                      Profiles & handles
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-3 gap-3">
+                  {competitiveProfiles.map((p) => (
+                    <a
+                      key={p.href}
+                      href={p.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-xl border px-4 py-3 flex items-center justify-between gap-3 transition-all hover:scale-[1.01]"
+                      style={{
+                        background: 'var(--bg-secondary)',
+                        borderColor: 'var(--border-color)',
+                        color: 'var(--text-primary)',
+                      }}
+                    >
+                      <span className="text-sm font-medium">{p.label}</span>
+                      <ExternalLink className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

@@ -1,12 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Trophy, Award, Star, Medal, Rocket, GraduationCap, ExternalLink } from 'lucide-react';
+import { Trophy, Award, Star, Medal, Rocket, GraduationCap, ExternalLink, ChevronLeft, ChevronRight, FileText, Image as ImageIcon } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Achievements = () => {
   const sectionRef = useRef(null);
+  const sliderRef = useRef(null);
+  const [activeCertIndex, setActiveCertIndex] = useState(0);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -91,36 +93,106 @@ const Achievements = () => {
     'Dean\'s List x3 (2023, 2024)',
   ];
 
-  const certifications = [
-    {
-      title: 'Machine Learning',
-      platform: 'Coursera — Stanford University',
-      year: '2024',
-      icon: '🤖',
-      link: '#',
-    },
-    {
-      title: 'Data Structures & Algorithms',
-      platform: 'NPTEL — IIT Kharagpur',
-      year: '2024',
-      icon: '🧮',
-      link: '#',
-    },
-    {
-      title: 'Python for Data Science',
-      platform: 'NPTEL — IIT Madras',
-      year: '2023',
-      icon: '🐍',
-      link: '#',
-    },
-    {
-      title: 'Introduction to Cybersecurity',
-      platform: 'Cisco Networking Academy',
-      year: '2024',
-      icon: '🔐',
-      link: '#',
-    },
-  ];
+  const certifications = useMemo(
+    () => [
+      {
+        title: 'AI x MedTech Hackathon',
+        platform: 'Certificate',
+        year: '2025',
+        file: 'AI x MedTech Hackathon Certificate.pdf',
+      },
+      {
+        title: 'InventX',
+        platform: 'IIT Gandhinagar',
+        year: '2025',
+        file: 'IITGN InventX 2025.pdf',
+      },
+      {
+        title: 'ISRO Space Challenge',
+        platform: 'IIITH',
+        year: '2025',
+        file: 'IIITH ISRO Space Challenge 2025.jpeg',
+      },
+      {
+        title: 'Bruxlix — Winner',
+        platform: 'Manipal University Jaipur',
+        year: '2026',
+        file: 'Manipal University Win (Bruxlix).jpg',
+      },
+      {
+        title: 'Event Coordinator',
+        platform: 'HackJKLU v4.0',
+        year: '2024',
+        file: 'HackJKLU v4.0 Event Coordinator.pdf',
+      },
+      {
+        title: 'Front-end Development',
+        platform: 'Certificate',
+        year: '2024',
+        file: 'Front-end Development.pdf',
+      },
+      {
+        title: 'Python Programming',
+        platform: 'CodeChef',
+        year: '2024',
+        file: 'Python Programming CodeChef.pdf',
+      },
+      {
+        title: 'Python for Everybody',
+        platform: 'Certificate',
+        year: '2024',
+        file: 'Python for Everybody.pdf',
+      },
+      {
+        title: 'C Programming',
+        platform: 'Infosys SpringBoard',
+        year: '2024',
+        file: 'C Programming Infosys SpringBoard.pdf',
+      },
+      {
+        title: 'Control Design with Simulink',
+        platform: 'Certificate',
+        year: '2024',
+        file: 'Control Design with Simulink.pdf',
+      },
+      {
+        title: 'Red Hat System Administration I (RH124)',
+        platform: 'Red Hat',
+        year: '2024',
+        file: 'Red Hat System Administration I (RH124) Certificate.pdf',
+      },
+      {
+        title: 'Honors Certificate',
+        platform: 'Certificate',
+        year: '2024',
+        file: 'Honors Certificate.pdf',
+      },
+    ],
+    []
+  );
+
+  const certSlides = useMemo(() => {
+    return certifications.map((cert) => {
+      const url = `/images/certificates/${encodeURIComponent(cert.file)}`;
+      const ext = cert.file.split('.').pop()?.toLowerCase();
+      const type = ext === 'jpg' || ext === 'jpeg' || ext === 'png' || ext === 'webp' ? 'image' : 'pdf';
+      return { ...cert, url, type };
+    });
+  }, [certifications]);
+
+  const goToCert = (index) => {
+    const clampedIndex = Math.max(0, Math.min(index, certSlides.length - 1));
+    setActiveCertIndex(clampedIndex);
+    const container = sliderRef.current;
+    if (!container) return;
+    const slideEl = container.querySelector(`[data-cert-slide="${clampedIndex}"]`);
+    if (slideEl) {
+      slideEl.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    }
+  };
+
+  const goPrevCert = () => goToCert(activeCertIndex - 1);
+  const goNextCert = () => goToCert(activeCertIndex + 1);
 
   return (
     <section
@@ -194,39 +266,158 @@ const Achievements = () => {
             >
               Certifications
             </h3>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {certifications.map((cert, index) => (
-                <a
-                  key={index}
-                  href={cert.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="achievement-card p-5 rounded-xl border transition-all duration-300 hover:scale-[1.03] hover:shadow-lg group block"
+
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                Swipe or use arrows to browse. Click a card to open.
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={goPrevCert}
+                  disabled={activeCertIndex === 0}
+                  className="w-10 h-10 rounded-xl border flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.02]"
                   style={{
                     background: 'var(--bg-secondary)',
                     borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)',
+                  }}
+                  aria-label="Previous certificate"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={goNextCert}
+                  disabled={activeCertIndex === certSlides.length - 1}
+                  className="w-10 h-10 rounded-xl border flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.02]"
+                  style={{
+                    background: 'var(--bg-secondary)',
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)',
+                  }}
+                  aria-label="Next certificate"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div
+              ref={sliderRef}
+              className="flex gap-4 overflow-x-auto pb-2"
+              style={{
+                scrollSnapType: 'x mandatory',
+                WebkitOverflowScrolling: 'touch',
+              }}
+              onScroll={(e) => {
+                const el = e.currentTarget;
+                const slideWidth = el.firstElementChild?.getBoundingClientRect().width || 1;
+                const nextIndex = Math.round(el.scrollLeft / (slideWidth + 16));
+                if (Number.isFinite(nextIndex) && nextIndex !== activeCertIndex) {
+                  setActiveCertIndex(Math.max(0, Math.min(nextIndex, certSlides.length - 1)));
+                }
+              }}
+            >
+              {certSlides.map((cert, index) => (
+                <a
+                  key={cert.file}
+                  data-cert-slide={index}
+                  href={cert.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="achievement-card shrink-0 w-[280px] sm:w-[320px] p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg group block"
+                  style={{
+                    background: 'var(--bg-secondary)',
+                    borderColor: 'var(--border-color)',
+                    scrollSnapAlign: 'start',
                   }}
                 >
-                  <div className="text-2xl mb-3">{cert.icon}</div>
-                  <h4
-                    className="font-medium text-sm mb-1"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    {cert.title}
-                  </h4>
-                  <p className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>
-                    {cert.platform}
-                  </p>
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center border"
+                        style={{
+                          background: 'var(--bg-primary)',
+                          borderColor: 'var(--border-color)',
+                          color: 'var(--text-primary)',
+                        }}
+                      >
+                        {cert.type === 'image' ? (
+                          <ImageIcon className="w-5 h-5 text-cyan" />
+                        ) : (
+                          <FileText className="w-5 h-5 text-purple" />
+                        )}
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>
+                          {cert.title}
+                        </h4>
+                        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                          {cert.platform}
+                        </p>
+                      </div>
+                    </div>
+                    <ExternalLink
+                      className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                      style={{ color: 'var(--text-muted)' }}
+                    />
+                  </div>
+
+                  {cert.type === 'image' ? (
+                    <div
+                      className="rounded-xl overflow-hidden border mb-4"
+                      style={{ borderColor: 'var(--border-color)' }}
+                    >
+                      <img
+                        src={cert.url}
+                        alt={`${cert.title} certificate`}
+                        className="w-full h-40 object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className="rounded-xl border mb-4 flex items-center justify-center h-40"
+                      style={{ borderColor: 'var(--border-color)', background: 'var(--bg-primary)' }}
+                    >
+                      <div className="text-center px-4">
+                        <FileText className="w-8 h-8 mx-auto mb-2" style={{ color: 'var(--text-muted)' }} />
+                        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                          PDF Certificate
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between">
                     <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
                       {cert.year}
                     </span>
-                    <ExternalLink
-                      className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                      style={{ color: 'var(--text-muted)' }}
-                    />
+                    <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>
+                      {index + 1}/{certSlides.length}
+                    </span>
                   </div>
                 </a>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-center gap-2 mt-5">
+              {certSlides.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => goToCert(index)}
+                  className="w-2.5 h-2.5 rounded-full transition-all"
+                  aria-label={`Go to certificate ${index + 1}`}
+                  style={{
+                    background:
+                      index === activeCertIndex
+                        ? 'linear-gradient(to right, rgb(123, 47, 247), rgb(0, 194, 255))'
+                        : 'rgba(255,255,255,0.18)',
+                    transform: index === activeCertIndex ? 'scale(1.15)' : 'scale(1)',
+                  }}
+                />
               ))}
             </div>
           </div>

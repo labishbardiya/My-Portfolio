@@ -72,33 +72,6 @@ function App() {
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 © 2025 Labish Bardiya. All rights reserved.
               </p>
-              <div className="flex items-center gap-6">
-                <a 
-                  href="https://github.com/labishbardiya" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-purple"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  GitHub
-                </a>
-                <a 
-                  href="https://linkedin.com/in/labishbardiya" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-purple"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  LinkedIn
-                </a>
-                <a 
-                  href="mailto:Labishjain7@gmail.com"
-                  className="transition-colors hover:text-purple"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  Email
-                </a>
-              </div>
             </div>
           </div>
         </footer>

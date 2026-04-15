@@ -149,6 +149,49 @@ app.get('/api/resume/:format', (req, res) => {
   });
 });
 
+app.get('/api/test-email', async (req, res) => {
+  try {
+    // Check if env vars exist
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      return res.status(500).json({
+        success: false,
+        error: 'SMTP_USER or SMTP_PASS not set',
+        envCheck: {
+          SMTP_HOST: !!process.env.SMTP_HOST,
+          SMTP_PORT: !!process.env.SMTP_PORT,
+          SMTP_USER: !!process.env.SMTP_USER,
+          SMTP_PASS: !!process.env.SMTP_PASS,
+          EMAIL_RECEIVER: !!process.env.EMAIL_RECEIVER,
+        },
+      });
+    }
+
+    // Try to verify transporter
+    await transporter.verify();
+
+    // Try to send a test email
+    const info = await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to: process.env.EMAIL_RECEIVER || process.env.SMTP_USER,
+      subject: 'Render Test Email',
+      text: 'If you receive this, Nodemailer is working from Render!',
+    });
+
+    return res.json({
+      success: true,
+      messageId: info.messageId,
+      response: info.response,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      code: error.code,
+      command: error.command,
+    });
+  }
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });

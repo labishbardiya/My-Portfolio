@@ -78,7 +78,13 @@ app.post('/api/contact', async (req, res) => {
 
     const saved = await contact.save();
 
-    // Send emails
+    // Respond immediately — don't make the user wait for emails
+    res.status(200).json({
+      message: 'Message saved successfully',
+      id: saved._id,
+    });
+
+    // Send emails in the background (fire-and-forget)
     if (process.env.SMTP_USER && process.env.SMTP_PASS) {
       const mailOptionsToOwner = {
         from: process.env.SMTP_USER,
@@ -102,19 +108,15 @@ app.post('/api/contact', async (req, res) => {
                <p>Best regards,<br/>Labish Bardiya</p>`,
       };
 
-      try {
-        await transporter.sendMail(mailOptionsToOwner);
-        await transporter.sendMail(mailOptionsToSender);
-        console.log('Email notifications sent successfully');
-      } catch (emailError) {
-        console.error('Failed to send email:', emailError);
-      }
+      Promise.all([
+        transporter.sendMail(mailOptionsToOwner),
+        transporter.sendMail(mailOptionsToSender),
+      ])
+        .then(() => console.log('Email notifications sent successfully'))
+        .catch((emailError) => console.error('Failed to send email:', emailError));
     }
 
-    return res.status(200).json({
-      message: 'Message saved successfully',
-      id: saved._id,
-    });
+    return;
   } catch (error) {
     console.error('MongoDB error:', error);
     return res.status(500).json({ message: 'Failed to save message' });

@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import nodemailer from 'nodemailer';
 import Contact from './models/Contact.js';
 
 dotenv.config();
@@ -19,6 +20,26 @@ if (!MONGODB_URI) {
   console.error('MONGODB_URI is not set in .env file');
   process.exit(1);
 }
+
+// Configure Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: process.env.SMTP_PORT || 465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+
+// Verify transporter connection
+transporter.verify((error, success) => {
+  if (error) {
+    console.warn('Nodemailer configuration warning:', error.message);
+  } else {
+    console.log('Nodemailer is ready to send messages');
+  }
+});
 
 app.use(cors({
   origin: [
@@ -56,6 +77,39 @@ app.post('/api/contact', async (req, res) => {
     });
 
     const saved = await contact.save();
+
+    // Send emails
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const mailOptionsToOwner = {
+        from: process.env.SMTP_USER,
+        replyTo: email,
+        to: process.env.EMAIL_RECEIVER || process.env.SMTP_USER,
+        subject: `New Contact Form Submission from ${name}`,
+        text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+        html: `<p><strong>Name:</strong> ${name}</p>
+               <p><strong>Email:</strong> ${email}</p>
+               <p><strong>Message:</strong></p>
+               <p>${message}</p>`,
+      };
+
+      const mailOptionsToSender = {
+        from: `"Labish Bardiya" <${process.env.SMTP_USER}>`,
+        to: email,
+        subject: `Re: Your Contact Submission`,
+        text: `Hi ${name},\n\nThank you for reaching out! I've received your message and will get back to you soon.\n\nBest regards,\nLabish Bardiya`,
+        html: `<p>Hi ${name},</p>
+               <p>Thank you for reaching out! I've received your message and will get back to you soon.</p>
+               <p>Best regards,<br/>Labish Bardiya</p>`,
+      };
+
+      try {
+        await transporter.sendMail(mailOptionsToOwner);
+        await transporter.sendMail(mailOptionsToSender);
+        console.log('Email notifications sent successfully');
+      } catch (emailError) {
+        console.error('Failed to send email:', emailError);
+      }
+    }
 
     return res.status(200).json({
       message: 'Message saved successfully',
